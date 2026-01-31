@@ -95,11 +95,10 @@ async function installToPath(skillSrc, targetDir, cli) {
   await copyDir(skillSrc, skillDest);
   console.log(`  Copied skill files`);
   
-  // Install npm dependencies
-  const scriptsDir = path.join(skillDest, 'scripts');
-  if (await fileExists(path.join(scriptsDir, 'package.json'))) {
-    console.log(`  Installing script dependencies...`);
-    await runCommand('npm', ['install', '--silent'], scriptsDir);
+  // Install npm dependencies in the skill root
+  if (await fileExists(path.join(skillDest, 'package.json'))) {
+    console.log(`  Installing dependencies...`);
+    await runCommand('npm', ['install', '--silent'], skillDest);
     console.log(`  Dependencies installed`);
   }
   

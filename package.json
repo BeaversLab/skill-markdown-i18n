@@ -9,8 +9,7 @@
   },
   "scripts": {
     "install-skill": "node install.js",
-    "test": "node scripts/validate.js --help",
-    "prepublishOnly": "cd scripts && pnpm install"
+    "test": "node scripts/validate.js --help"
   },
   "files": [
     "install.js",
@@ -18,13 +17,14 @@
     "README.md",
     "glossary.md",
     "scripts/*.js",
-    "scripts/package.json"
+    "package.json"
   ],
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "inquirer": "^9.2.12"
+    "inquirer": "^9.2.12",
+    "js-yaml": "^4.1.0"
   },
   "keywords": [
     "markdown",
