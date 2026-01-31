@@ -3,20 +3,26 @@
   "version": "1.0.0",
   "description": "Translate and sync markdown documentation between languages. AI coding assistant skill for Cursor, Claude Code, Codex, and Gemini.",
   "type": "module",
+  "packageManager": "pnpm@10.26.1",
   "bin": {
     "skill-markdown-i18n": "./install.js"
   },
   "scripts": {
     "install-skill": "node install.js",
-    "test": "node scripts/validate.js --help"
+    "test": "node scripts/validate.js --help",
+    "prepublishOnly": "cd scripts && pnpm install"
   },
   "files": [
     "install.js",
     "SKILL.md",
     "README.md",
     "glossary.md",
-    "scripts/"
+    "scripts/*.js",
+    "scripts/package.json"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "inquirer": "^9.2.12"
   },

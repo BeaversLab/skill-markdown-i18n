@@ -1,0 +1,9 @@
+# Don't publish these files to npm
+node_modules/
+scripts/node_modules/
+pnpm-lock.yaml
+scripts/pnpm-lock.yaml
+*.tgz
+.git/
+.gitignore
+.npmrc
