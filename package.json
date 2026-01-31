@@ -1,0 +1,45 @@
+{
+  "name": "skill-markdown-i18n",
+  "version": "1.0.0",
+  "description": "Translate and sync markdown documentation between languages. AI coding assistant skill for Cursor, Claude Code, Codex, and Gemini.",
+  "type": "module",
+  "bin": {
+    "skill-markdown-i18n": "./install.js"
+  },
+  "scripts": {
+    "install-skill": "node install.js",
+    "test": "node scripts/validate.js --help"
+  },
+  "files": [
+    "install.js",
+    "SKILL.md",
+    "README.md",
+    "glossary.md",
+    "scripts/"
+  ],
+  "dependencies": {
+    "inquirer": "^9.2.12"
+  },
+  "keywords": [
+    "markdown",
+    "i18n",
+    "translation",
+    "localization",
+    "cursor",
+    "claude-code",
+    "codex",
+    "gemini",
+    "ai-skill",
+    "documentation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeaversLab/skill-markdown-i18n.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BeaversLab/skill-markdown-i18n/issues"
+  },
+  "homepage": "https://github.com/BeaversLab/skill-markdown-i18n#readme",
+  "author": "BeaversLab",
+  "license": "MIT"
+}

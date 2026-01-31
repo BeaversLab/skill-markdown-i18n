@@ -7,9 +7,19 @@ description: Translate and sync markdown documentation between languages (EN↔Z
 
 Translate markdown documentation between languages while preserving structure and technical content.
 
-## Supported CLI Environments
+## Installation
 
-This skill works across multiple AI coding assistants:
+### Quick Install (Interactive)
+
+```bash
+npx skill-markdown-i18n
+```
+
+The installer will prompt you to:
+1. Choose scope: Global (all projects) or Project (current directory)
+2. Select CLIs: Cursor, Claude Code, Codex, Gemini
+
+### Supported CLI Environments
 
 | CLI | Skill Location | Notes |
 |-----|----------------|-------|
@@ -20,12 +30,14 @@ This skill works across multiple AI coding assistants:
 
 ### Codex Configuration
 
-For project-level skills to auto-load, ensure `.codex/config.toml` exists:
+For project-level Codex skills to auto-load, ensure `.codex/config.toml` exists:
 
 ```toml
 [features]
 skills = true
 ```
+
+The interactive installer handles this automatically.
 
 ## Translation Plan (Required for Batch Translation)
 

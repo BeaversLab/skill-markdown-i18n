@@ -10,7 +10,24 @@ Translate and synchronize markdown documentation across languages.
 - **Quality validation**: Automated structure and content checks
 - **Translation plan**: YAML-based progress tracking with resume support
 
-## Installation by CLI
+## Quick Install (Interactive)
+
+```bash
+# From npm (recommended)
+npx skill-markdown-i18n
+
+# Or clone and run locally
+git clone https://github.com/BeaversLab/skill-markdown-i18n.git
+cd skill-markdown-i18n
+node install.js
+```
+
+The interactive installer will:
+1. Ask whether to install globally or to current project
+2. Let you select which CLIs to install for (Cursor, Claude Code, Codex, Gemini)
+3. Automatically install dependencies and configure Codex if needed
+
+## Manual Installation
 
 ### Cursor
 
