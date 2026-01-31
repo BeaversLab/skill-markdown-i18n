@@ -1,0 +1,15 @@
+{
+  "name": "markdown-i18n-scripts",
+  "version": "1.0.0",
+  "description": "Utility scripts for markdown i18n skill",
+  "type": "module",
+  "scripts": {
+    "create-plan": "node create-plan.js",
+    "update-plan": "node update-plan.js",
+    "validate": "node validate.js",
+    "diff-sections": "node diff-sections.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
