@@ -2,51 +2,57 @@
 
 Technical terms and their translation conventions.
 
-## Keep in English
+## Link Localization
 
-These terms should NOT be translated:
+Internal site links must be localized to the target language:
 
-| Term | Reason |
-|------|--------|
-| API | Industry standard |
-| CLI | Industry standard |
-| OAuth | Protocol name |
-| JWT | Protocol name |
-| Gateway | Product term |
-| webhook | Technical term |
-| npm | Tool name |
-| Node.js | Tool name |
-| PATH | Environment concept |
-| SSL/TLS | Protocol names |
-| HTTP/HTTPS | Protocol names |
-| RPC | Protocol name |
-| JSON/YAML | Format names |
-| URL | Industry standard |
-| UI | Industry standard |
-| ID | Industry standard |
+### Pattern Rules
 
-## Translate Consistently
+| Source Pattern | Target Pattern (ZH) | Example |
+|----------------|---------------------|---------|
+| `/en/*` | `/zh/*` | `/en/guide` → `/zh/guide` |
+| `/xxx` (no locale) | `/zh/xxx` | `/install` → `/zh/install` |
+| `http://*` or `https://*` | Keep unchanged | `https://api.example.com` (no change) |
 
-| EN | ZH | JA | KO |
-|----|----|----|-----|
-| Install | 安装 | インストール | 설치 |
-| Configuration | 配置 | 設定 | 설정 |
-| Troubleshooting | 故障排查 | トラブルシューティング | 문제 해결 |
-| Authentication | 认证 | 認証 | 인증 |
-| Authorization | 授权 | 認可 | 인가 |
-| Settings | 设置 | 設定 | 설정 |
-| Guide | 指南 | ガイド | 가이드 |
-| Documentation | 文档 | ドキュメント | 문서 |
-| Error | 错误 | エラー | 오류 |
-| Warning | 警告 | 警告 | 경고 |
-| Success | 成功 | 成功 | 성공 |
-| Failed | 失败 | 失敗 | 실패 |
-| Running | 运行中 | 実行中 | 실행 중 |
-| Stopped | 已停止 | 停止 | 중지됨 |
-| Connected | 已连接 | 接続済み | 연결됨 |
-| Disconnected | 已断开 | 切断 | 연결 해제됨 |
-| Allowlist | 允许列表 | 許可リスト | 허용 목록 |
-| Blocklist | 阻止列表 | ブロックリスト | 차단 목록 |
+### Identification
+
+**Internal links to localize:**
+- Start with `/` (root-relative)
+- Point to pages within the same site
+- DO NOT contain `http://` or `https://`
+
+**External links (keep unchanged):**
+- Start with `http://` or `https://`
+- Point to different domains
+- Example: `https://developer.mozilla.org`
+
+### Examples
+
+```markdown
+# English Source
+- See [Installation Guide](/en/install) for setup
+- Check [API Reference](/api) for details
+- Visit [GitHub](https://github.com) for source code
+- Relative: [Getting Started](../guide)
+
+# Chinese Translation
+- 查看[安装指南](/zh/install)进行设置
+- 检查 [API 参考](/zh/api)了解详情
+- 访问 [GitHub](https://github.com)查看源代码
+- 相对链接：[入门指南](../guide)
+```
+
+### Special Cases
+
+1. **Relative links** - Keep unchanged:
+   - `../other-page` (relative to current directory)
+   - `./same-page` (same directory)
+
+2. **Anchor links** - Keep anchor, localize path:
+   - `/en/guide#install` → `/zh/guide#install`
+
+3. **Mixed content** - Localize path, keep anchor and query params:
+   - `/en/guide?version=2.0#install` → `/zh/guide?version=2.0#install`
 
 ## Context-Dependent
 

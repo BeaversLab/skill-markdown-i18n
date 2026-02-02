@@ -43,6 +43,113 @@ The interactive installer handles this automatically.
 
 **IMPORTANT**: Before translating new documents, you MUST create a translation plan first.
 
+### No-Translate Configuration
+
+**Control what should NOT be translated** using a configuration file.
+
+Create `.i18n/no-translate.yaml` in your project root to specify:
+
+1. **Headings to keep in English** (exact match or pattern)
+2. **Terms to not translate** (product names, brand terms)
+3. **Sections to skip** (entire sections)
+4. **URL patterns to exclude** (links to external docs)
+
+**Example configuration:**
+```yaml
+# .i18n/no-translate.yaml
+
+headings:
+  # Exact match
+  - text: "API Reference"
+    reason: "Industry standard term"
+
+  # Pattern match (regex)
+  - pattern: ".*Getting Started.*"
+    reason: "Brand-specific phrase"
+
+terms:
+  - text: "Gateway"
+    reason: "Product name"
+    context: "always"
+
+  - text: "CLI"
+    reason: "Industry standard"
+    context: "always"
+
+sections:
+  - title: "Changelog"
+    reason: "Historical record"
+
+urls:
+  - pattern: "/api/.*"
+    reason: "API documentation stays in English"
+```
+
+**How it works:**
+- AI will check this file before translating
+- Headings/terms matching the rules will be kept in English
+- You can use exact text or regex patterns
+- Includes `reason` field for documentation
+
+**Why use this:**
+- Product names should stay consistent
+- Industry-standard terms (API, CLI) shouldn't be translated
+- Brand phrases need to maintain original language
+- Technical sections may need to stay in English
+
+**Location:** `<project_root>/.i18n/no-translate.yaml`
+
+If the file doesn't exist, AI will use judgment based on the glossary.
+
+### Translation Consistency Configuration
+
+**Ensure consistent terminology translation** across all documents using a configuration file.
+
+Create `.i18n/translation-consistency.yaml` in your project root to specify:
+1. **Standard term translations** for consistent vocabulary
+2. **Multi-language mappings** (EN, ZH, JA, KO)
+3. **Context-specific translations** (optional)
+
+**Example configuration:**
+```yaml
+# .i18n/translation-consistency.yaml
+
+translations:
+  install:
+    en: Install
+    zh: 安装
+    ja: インストール
+    ko: 설치
+
+  configuration:
+    en: Configuration
+    zh: 配置
+    ja: 設定
+    ko: 설정
+
+  troubleshooting:
+    en: Troubleshooting
+    zh: 故障排查
+    ja: トラブルシューティング
+    ko: 문제 해결
+```
+
+**How it works:**
+- AI checks this file before translating common terms
+- Ensures "Install" is always translated as "安装" (not "安装程序" or "设置")
+- Provides multi-language support for consistent global documentation
+- Use lowercase keys for easier matching
+
+**Why use this:**
+- Maintain consistent terminology across all documentation
+- Avoid confusion from multiple translations of the same term
+- Professional-grade documentation quality
+- Essential for multi-language projects
+
+**Location:** `<project_root>/.i18n/translation-consistency.yaml`
+
+If the file doesn't exist, AI will use judgment based on context.
+
 ### Plan File Location
 
 The plan file is stored in the **project's `.i18n` directory**:
@@ -156,21 +263,60 @@ When user wants to continue:
 
 ## Workflow Types
 
-### 1. Translate New Document (Single File)
+### 0. Sync Updated Document (Git-based)
+
+Source file was updated in Git, target needs incremental sync:
+
+```
+Task Progress:
+- [ ] Read .i18n/no-translate.yaml (if exists)
+- [ ] Run git-diff-sync to detect changes
+- [ ] Review affected sections in source
+- [ ] For each changed section:
+    - [ ] Check if heading is in no-translate list
+    - [ ] If YES: Keep in English (don't translate)
+    - [ ] If NO: Translate only changed parts
+    - [ ] Merge into existing target
+    - [ ] Preserve unchanged content
+- [ ] Validate structure and links
+- [ ] Update plan status if applicable
+```
+
+### 1. Sync Existing Translations (Directory-based)
+
+Detect changes between source and target directories:
+
+```
+Task Progress:
+- [ ] Run sync-plan to detect changes
+- [ ] Review detected changes:
+  - [ ] New files (in source only) → translate
+  - [ ] Modified files (content changed) → sync changes
+  - [ ] Deleted files (in target only) → review and delete if needed
+- [ ] Execute sync actions
+- [ ] Validate results
+```
+
+### 2. Translate New Document (Single File)
 
 For single file, plan is optional. For multiple files, plan is REQUIRED.
 
 ```
 Task Progress:
+- [ ] Read .i18n/no-translate.yaml (if exists)
 - [ ] Read source document
 - [ ] Identify preserve elements
-- [ ] Translate content
+- [ ] For each section:
+    - [ ] Check if heading is in no-translate list
+    - [ ] If YES: Keep heading in English
+    - [ ] If NO: Translate heading
+    - [ ] Translate content (skip terms in no-translate list)
 - [ ] Adjust locale-specific links
 - [ ] Validate output
 - [ ] Update plan status (if plan exists)
 ```
 
-### 2. Translate New Documents (Batch) - REQUIRES PLAN
+### 3. Translate New Documents (Batch) - REQUIRES PLAN
 
 ```
 Task Progress:
@@ -180,19 +326,6 @@ Task Progress:
     - [ ] Validate output
     - [ ] Mark as done in plan
 - [ ] Report final summary
-```
-
-### 3. Sync Updated Document
-
-Source was updated, target needs sync.
-
-```
-Task Progress:
-- [ ] Diff source vs previous version
-- [ ] Identify changed sections
-- [ ] Translate only changed parts
-- [ ] Merge into target
-- [ ] Validate output
 ```
 
 ## Translation Rules
@@ -221,21 +354,76 @@ Task Progress:
    ```yaml
    # EN
    summary: "Troubleshooting hub: symptoms → checks → fixes"
-   
+
    # ZH
    summary: "故障排查枢纽：症状 → 检查 → 修复"
    ```
 
-2. **Internal links** - Add locale prefix:
+2. **Internal links** - Adjust locale prefix based on target language:
+
+   **Rule:** Internal site links should use the target language prefix
+
    ```markdown
-   # EN
-   [Install](/install#nodejs--npm-path-sanity)
-   
-   # ZH  
-   [安装](/zh/install#nodejs--npm-path-sanity)
+   # EN source
+   [Install Guide](/en/install)
+   [API Reference](/api/overview)
+   [Getting Started](/en/get-started)
+
+   # ZH target
+   [安装指南](/zh/install)
+   [API 参考](/zh/api/overview)
+   [入门指南](/zh/get-started)
+   ```
+
+   **Link transformation patterns:**
+   - `/en/*` → `/zh/*` (replace source locale with target)
+   - `/xxx` (no locale) → `/zh/xxx` (add target locale prefix)
+   - External URLs → Keep unchanged
+
+   **Examples:**
+   ```markdown
+   # Source (EN)
+   - See [Install](/en/install) for details
+   - Check [API docs](/api) reference
+   - Visit [https://example.com](https://example.com)
+
+   # Target (ZH)
+   - 查看[安装](/zh/install)了解详情
+   - 检查 [API 文档](/zh/api)参考
+   - 访问 [https://example.com](https://example.com)
    ```
 
 3. **Section headings** - Translate text, keep anchors working
+
+   **IMPORTANT:** Check `.i18n/no-translate.yaml` first!
+
+   Headings in the no-translate list should be kept in English.
+
+   **Decision flow:**
+   ```
+   1. Check if heading is in .i18n/no-translate.yaml
+      → If YES: Keep in English
+      → If NO: Proceed to step 2
+
+   2. Is it a product/brand name?
+      → If YES: Keep in English
+      → If NO: Proceed to step 3
+
+   3. Is it an industry-standard term (API, CLI, OAuth)?
+      → If YES: Keep in English
+      → If NO: Translate to target language
+   ```
+
+   **Examples:**
+   ```markdown
+   # Keep in English (in no-translate.yaml)
+   ## API Reference
+   ### CLI Commands
+
+   # Translate
+   ## 安装指南
+   ### 配置选项
+   ```
 
 ### Technical Terms Strategy
 
@@ -276,7 +464,7 @@ After translation, verify:
 - [ ] Technical terms consistent
 ```
 
-## Example: Full Translation
+## Example: Full Translation with Link Localization
 
 **Source (EN):**
 ```markdown
@@ -292,7 +480,12 @@ Run the installer:
 curl -fsSL https://example.com/install.sh | bash
 \`\`\`
 
-See [configuration](/config) for options.
+See [configuration](/en/config) for options.
+
+For more details:
+- [Installation Guide](/en/install)
+- [API Documentation](/api/reference)
+- [External Resource](https://developer.mozilla.com)
 ```
 
 **Target (ZH):**
@@ -310,7 +503,17 @@ curl -fsSL https://example.com/install.sh | bash
 \`\`\`
 
 参见[配置](/zh/config)了解选项。
+
+更多详情：
+- [安装指南](/zh/install)
+- [API 文档](/zh/api/reference)
+- [外部资源](https://developer.mozilla.org)
 ```
+
+**Key transformations:**
+- `/en/config` → `/zh/config` (replace locale)
+- `/api/reference` → `/zh/api/reference` (add locale prefix)
+- `https://developer.mozilla.org` → unchanged (external URL)
 
 ## Sync Workflow Detail
 
@@ -379,12 +582,16 @@ cd <skill-path>/scripts && npm install
 
 | Script | Purpose | Usage |
 |--------|---------|-------|
-| `create-plan.js` | Generate translation plan | `node scripts/create-plan.js docs/en docs/zh [-o custom/path.yaml]` |
+| `create-plan.js` | Generate initial translation plan | `node scripts/create-plan.js docs/en docs/zh [-o path.yaml]` |
+| `git-diff-sync.js` | Create Git-based sync plan | `node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md [-r REF]` |
+| `sync-plan.js` | Create directory sync plan | `node scripts/sync-plan.js docs/en docs/zh [-o path.yaml]` |
 | `update-plan.js` | Update file status in plan | `node scripts/update-plan.js .i18n/translation-plan.yaml docs/en/guide.md done` |
 | `validate.js` | Validate translation quality | `node scripts/validate.js source.md target.md` |
 | `diff-sections.js` | Find changed sections | `node scripts/diff-sections.js old.md new.md` |
 
 ### create-plan.js
+
+Generate an initial translation plan for all files in source directory:
 
 The script automatically detects whether the skill is installed globally or per-project:
 
@@ -399,13 +606,115 @@ node scripts/create-plan.js docs/en docs/zh
 node scripts/create-plan.js docs/en docs/zh -o /path/to/custom-plan.yaml
 ```
 
+### sync-plan.js
+
+Create a sync plan by comparing source and target directories to detect changes:
+
+**Detects four types of changes:**
+- `+ New files` - Only exist in source (needs translation)
+- `* Modified files` - Exist in both but content differs (needs sync)
+- `- Deleted files` - Only exist in target (review for deletion)
+- `= Unchanged files` - Exist in both with same content (no action needed)
+
+```bash
+# Basic sync (compares docs/en with docs/zh)
+node scripts/sync-plan.js docs/en docs/zh
+
+# Custom output location
+node scripts/sync-plan.js docs/en docs/zh -o custom/sync-plan.yaml
+```
+
+**Output includes:**
+- File status (pending/needs_update/deleted/done)
+- Change type (NEW/MODIFIED/DELETED/UNCHANGED)
+- Content hashes for comparison
+- Actionable summary
+
+**Example output:**
+```
+Scanning directories...
+  Source: docs/en
+  Target: docs/zh
+
+Comparing files...
+  + NEW: guide/new-feature.md
+  * MODIFIED: guide/intro.md
+  - DELETED: guide/old-feature.md
+
+✓ Sync plan created: .i18n/translation-plan.yaml
+
+Summary:
+  New files:      1
+  Modified files: 1
+  Deleted files:  1
+  Unchanged:      10
+  Total:          13
+
+Actions needed: 3
+```
+
+### git-diff-sync.js
+
+Create a sync plan based on Git diff for a single file:
+
+**Compares file versions using Git:**
+- Uses `git diff` to detect precise line-level changes
+- Identifies which markdown sections are affected
+- Generates targeted sync plan for only changed content
+
+```bash
+# Compare with last commit (HEAD)
+node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md
+
+# Compare with specific commit
+node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md -r HEAD~1
+
+# Compare with specific branch
+node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md -r main
+
+# Custom output location
+node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md -o custom/git-sync.yaml
+```
+
+**Output includes:**
+- Git diff hunks (line ranges of changes)
+- Affected markdown sections
+- Instructions for incremental sync
+- Target file existence check
+
+**Example output:**
+```
+Analyzing Git changes...
+  Source file: docs/en/guide.md
+  Target file: docs/zh/guide.md
+  Git reference: HEAD
+  Working directory: /project
+
+Getting Git diff...
+  Found 2 change hunk(s)
+
+✓ Changes detected in 1 section(s):
+  - Getting Started
+
+✓ Sync plan created: .i18n/git-sync-plan.yaml
+
+Next steps:
+  1. Review the plan file for detailed change information
+  2. Translate the affected sections
+  3. Validate the result
+```
+
+**Use case:** When a source file is updated in Git and you need to sync only the changes to the translation, rather than re-translating the entire file.
+
 ### Status Values
 
 | Status | Meaning |
 |--------|---------|
-| `pending` | Not started |
+| `pending` | Not started (new file to translate) |
 | `in_progress` | Currently working |
-| `done` | Completed |
+| `done` | Completed (unchanged) |
+| `needs_update` | File modified in source, needs sync |
+| `deleted` | Source file deleted, review target for deletion |
 | `skipped` | Intentionally skipped |
 
 ## Additional Resources

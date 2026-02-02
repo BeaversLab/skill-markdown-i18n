@@ -31,13 +31,22 @@ npx skill-markdown-i18n
 These scripts are used by the skill workflow and by end users:
 
 ```bash
-# Create a translation plan (required for batch operations)
-node scripts/create-plan.js <source_dir> <target_dir> -o <output_file>
-# Example: node scripts/create-plan.js docs/en docs/zh -o translation-plan.yaml
+# Create initial translation plan (for new translations)
+node scripts/create-plan.js <source_dir> <target_dir> [-o <output_file>]
+# Example: node scripts/create-plan.js docs/en docs/zh
+
+# Create Git-based sync plan (compare file versions using git diff)
+node scripts/git-diff-sync.js <source_file> <target_file> [-r <git_ref>] [-o <output_file>]
+# Example: node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md
+# Example: node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md -r HEAD~1
+
+# Create directory sync plan (detect changes between existing translations)
+node scripts/sync-plan.js <source_dir> <target_dir> [-o <output_file>]
+# Example: node scripts/sync-plan.js docs/en docs/zh
 
 # Update translation plan status
 node scripts/update-plan.js <plan_file> <source_file> <status> [--notes <text>]
-# Example: node scripts/update-plan.js translation-plan.yaml docs/en/guide.md done
+# Example: node scripts/update-plan.js .i18n/translation-plan.yaml docs/en/guide.md done
 
 # Validate translation quality
 node scripts/validate.js <source.md> <target.md>
@@ -46,6 +55,38 @@ node scripts/validate.js --dir <source_dir> <target_dir>  # Validate all files
 # Find changed sections between versions
 node scripts/diff-sections.js <old_version.md> <new_version.md>
 ```
+
+### Git Diff Sync Feature
+
+The `git-diff-sync.js` script uses Git to compare file versions:
+
+**Key features:**
+- Uses `git diff` for precise line-level change detection
+- Identifies affected markdown sections
+- Generates targeted sync plan for only changed content
+- Supports any Git reference (HEAD, HEAD~1, branches, commits)
+
+**When to use:**
+- Source file was updated in Git and you need to sync changes to translation
+- Want to avoid re-translating the entire file
+- Need precise change detection based on version control
+
+**How it works:**
+1. Runs `git diff <git_ref> -- <source_file>` to get changes
+2. Parses diff hunks to identify changed line ranges
+3. Maps changes to markdown sections (headings)
+4. Creates sync plan with affected sections list
+
+### Directory Sync Plan Feature
+
+The `sync-plan.js` script compares two directories and detects:
+
+1. **New files** (+) - Only in source (needs translation)
+2. **Modified files** (*) - In both but content differs (needs sync)
+3. **Deleted files** (-) - Only in target (review for deletion)
+4. **Unchanged files** (=) - In both, same content (no action)
+
+Uses MD5 hash for accurate content comparison (more reliable than timestamps).
 
 ### Package Management
 

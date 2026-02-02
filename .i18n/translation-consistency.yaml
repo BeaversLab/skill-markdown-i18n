@@ -1,0 +1,113 @@
+# Translation Consistency Configuration
+#
+# This file ensures consistent terminology translation across languages
+# Place this file in your project's .i18n/ directory
+
+translations:
+  install:
+    en: Install
+    zh: 安装
+    ja: インストール
+    ko: 설치
+
+  configuration:
+    en: Configuration
+    zh: 配置
+    ja: 設定
+    ko: 설정
+
+  troubleshooting:
+    en: Troubleshooting
+    zh: 故障排查
+    ja: トラブルシューティング
+    ko: 문제 해결
+
+  authentication:
+    en: Authentication
+    zh: 认证
+    ja: 認証
+    ko: 인증
+
+  authorization:
+    en: Authorization
+    zh: 授权
+    ja: 認可
+    ko: 인가
+
+  settings:
+    en: Settings
+    zh: 设置
+    ja: 設定
+    ko: 설정
+
+  guide:
+    en: Guide
+    zh: 指南
+    ja: ガイド
+    ko: 가이드
+
+  documentation:
+    en: Documentation
+    zh: 文档
+    ja: ドキュメント
+    ko: 문서
+
+  error:
+    en: Error
+    zh: 错误
+    ja: エラー
+    ko: 오류
+
+  warning:
+    en: Warning
+    zh: 警告
+    ja: 警告
+    ko: 경고
+
+  success:
+    en: Success
+    zh: 成功
+    ja: 成功
+    ko: 성공
+
+  failed:
+    en: Failed
+    zh: 失败
+    ja: 失敗
+    ko: 실패
+
+  running:
+    en: Running
+    zh: 运行中
+    ja: 実行中
+    ko: 실행 중
+
+  stopped:
+    en: Stopped
+    zh: 已停止
+    ja: 停止
+    ko: 중지됨
+
+  connected:
+    en: Connected
+    zh: 已连接
+    ja: 接続済み
+    ko: 연결됨
+
+  disconnected:
+    en: Disconnected
+    zh: 已断开
+    ja: 切断
+    ko: 연결 해제됨
+
+  allowlist:
+    en: Allowlist
+    zh: 允许列表
+    ja: 許可リスト
+    ko: 허용 목록
+
+  blocklist:
+    en: Blocklist
+    zh: 阻止列表
+    ja: ブロックリスト
+    ko: 차단 목록

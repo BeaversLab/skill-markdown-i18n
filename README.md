@@ -5,7 +5,9 @@ Translate and synchronize markdown documentation across languages.
 ## Features
 
 - **New document translation**: Translate from source to target language
-- **Sync updates**: Update translations when source changes
+- **Git-based sync**: Detect and sync incremental changes using `git diff`
+- **Directory sync**: Compare folders to find new/modified/deleted files
+- **Link localization**: Automatically adjust internal links to target language locale
 - **Preserve technical content**: Code blocks, commands, URLs stay unchanged
 - **Quality validation**: Automated structure and content checks
 - **Translation plan**: YAML-based progress tracking with resume support
@@ -81,6 +83,18 @@ Copy `SKILL.md` content to your `.gemini/` config or reference in `GEMINI.md`.
 
 ## Usage Examples
 
+### Sync After Git Update (Single File)
+
+```
+The file docs/en/guide.md was updated in Git. Sync the changes to docs/zh/guide.md.
+```
+
+### Sync Directory Changes
+
+```
+The source docs/en/ was updated. Sync the docs/zh/ translations.
+```
+
 ### Translate New File
 
 ```
@@ -103,14 +117,23 @@ Translate all markdown files in docs/en/ to docs/zh/
 ### Create Translation Plan (Required for Batch)
 
 ```bash
-# Create plan before batch translation
+# Initial translation plan (for new translations)
 # Output location:
 #   - Project skill: <project_root>/.i18n/translation-plan.yaml
 #   - Global skill:  <cwd>/.i18n/translation-plan.yaml
 node scripts/create-plan.js docs/en docs/zh
 
+# Git-based sync plan (compare with last commit)
+node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md
+
+# Git-based sync plan (compare with specific commit)
+node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md -r HEAD~1
+
+# Directory sync plan (detect changes between folders)
+node scripts/sync-plan.js docs/en docs/zh
+
 # Or specify custom output location
-node scripts/create-plan.js docs/en docs/zh --output custom/path/plan.yaml
+node scripts/sync-plan.js docs/en docs/zh --output custom/path/plan.yaml
 ```
 
 ### Update Plan Status
@@ -147,7 +170,9 @@ markdown-i18n/
 ├── README.md         # This file
 └── scripts/
     ├── package.json      # Dependencies (js-yaml)
-    ├── create-plan.js    # Generate translation plan (YAML)
+    ├── create-plan.js    # Generate initial translation plan (YAML)
+    ├── git-diff-sync.js  # Create Git-based sync plan
+    ├── sync-plan.js      # Create directory sync plan (detect changes)
     ├── update-plan.js    # Update plan status
     ├── validate.js       # Validate translation quality
     └── diff-sections.js  # Identify changed sections
@@ -193,8 +218,83 @@ log:
     action: done
 ```
 
+## No-Translate Configuration
+
+Control which content should NOT be translated by creating `.i18n/no-translate.yaml`:
+
+```yaml
+# .i18n/no-translate.yaml
+
+headings:
+  - text: "API Reference"
+    reason: "Industry standard"
+
+terms:
+  - text: "Gateway"
+    reason: "Product name"
+
+sections:
+  - title: "Changelog"
+    reason: "Historical record"
+```
+
+**Usage:**
+- Product names stay consistent across languages
+- Industry terms (API, CLI) remain in English
+- Brand phrases maintain original language
+- Technical sections can be excluded from translation
+
+Place this file in your project's `.i18n/` directory.
+
+## Translation Consistency Configuration
+
+Ensure consistent terminology across all documentation by creating `.i18n/translation-consistency.yaml`:
+
+```yaml
+# .i18n/translation-consistency.yaml
+
+translations:
+  install:
+    en: Install
+    zh: 安装
+    ja: インストール
+    ko: 설치
+
+  configuration:
+    en: Configuration
+    zh: 配置
+    ja: 設定
+    ko: 설정
+
+  troubleshooting:
+    en: Troubleshooting
+    zh: 故障排查
+    ja: トラブルシューティング
+    ko: 문제 해결
+```
+
+**Usage:**
+- Maintain consistent vocabulary across all documents
+- "Install" always translates to "安装" (never "安装程序" or "设置")
+- Multi-language support for global documentation
+- Professional documentation quality
+
+Place this file in your project's `.i18n/` directory.
+
 ## Supported Languages
 
 Primary: English (en) ↔ Chinese (zh)
 
 Extensible to: Japanese (ja), Korean (ko), and others via glossary.md
+
+## Link Localization
+
+Internal site links are automatically adjusted for the target language:
+
+| Source (EN) | Target (ZH) | Pattern |
+|-------------|-------------|----------|
+| `/en/guide` | `/zh/guide` | Replace locale |
+| `/install` | `/zh/install` | Add locale prefix |
+| `https://external.com` | `https://external.com` | Keep unchanged |
+
+This ensures translated documentation links correctly to other translated pages.

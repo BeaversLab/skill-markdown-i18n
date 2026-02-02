@@ -1,0 +1,77 @@
+# No-Translate Configuration
+#
+# This file controls which content should NOT be translated
+# Place this file in your project's .i18n/ directory
+
+# Individual terms that should remain in English
+terms:
+  # Industry standard terms
+  - text: "API"
+    reason: "Industry standard"
+    context: "always"
+
+  - text: "CLI"
+    reason: "Industry standard"
+    context: "always"
+
+  - text: "URL"
+    reason: "Industry standard"
+    context: "always"
+
+  - text: "UI"
+    reason: "Industry standard"
+    context: "always"
+
+  - text: "ID"
+    reason: "Industry standard"
+    context: "always"
+
+  # Protocol names
+  - text: "OAuth"
+    reason: "Protocol name"
+    context: "always"
+
+  - text: "JWT"
+    reason: "Protocol name"
+    context: "always"
+
+  - text: "SSL/TLS"
+    reason: "Protocol names"
+    context: "always"
+
+  - text: "HTTP/HTTPS"
+    reason: "Protocol names"
+    context: "always"
+
+  - text: "RPC"
+    reason: "Protocol name"
+    context: "always"
+
+  # Format names
+  - text: "JSON/YAML"
+    reason: "Format names"
+    context: "always"
+
+  # Technical terms
+  - text: "webhook"
+    reason: "Technical term"
+    context: "always"
+
+  # Tool names
+  - text: "npm"
+    reason: "Tool name"
+    context: "always"
+
+  - text: "Node.js"
+    reason: "Tool name"
+    context: "always"
+
+  # Environment concepts
+  - text: "PATH"
+    reason: "Environment concept"
+    context: "always"
+
+  # Product terms (add your product-specific terms here)
+  - text: "Gateway"
+    reason: "Product term"
+    context: "always"
