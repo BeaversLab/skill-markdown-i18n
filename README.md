@@ -104,18 +104,23 @@ Translate all markdown files in docs/en/ to docs/zh/
 
 ```bash
 # Create plan before batch translation
-node scripts/create-plan.js docs/en docs/zh \
-    --output .codex/skills/markdown-i18n/translation-plan.yaml
+# Output location:
+#   - Project skill: <project_root>/.i18n/translation-plan.yaml
+#   - Global skill:  <cwd>/.i18n/translation-plan.yaml
+node scripts/create-plan.js docs/en docs/zh
+
+# Or specify custom output location
+node scripts/create-plan.js docs/en docs/zh --output custom/path/plan.yaml
 ```
 
 ### Update Plan Status
 
 ```bash
 # Mark file as done
-node scripts/update-plan.js translation-plan.yaml docs/en/guide.md done
+node scripts/update-plan.js .i18n/translation-plan.yaml docs/en/guide.md done
 
 # Mark as in progress with notes
-node scripts/update-plan.js translation-plan.yaml docs/en/faq.md in_progress --notes "50%"
+node scripts/update-plan.js .i18n/translation-plan.yaml docs/en/faq.md in_progress --notes "50%"
 ```
 
 ### Validate Translation
@@ -156,10 +161,11 @@ For batch translations, a plan file is REQUIRED. The plan:
 - Allows resuming after interruption
 - Tracks progress with timestamps in log section
 
-Plan location (stored in PROJECT, not global skill folder):
-- Cursor: `<project>/.cursor/skills/markdown-i18n/translation-plan.yaml`
-- Claude Code: `<project>/.claude/skills/markdown-i18n/translation-plan.yaml`
-- Codex: `<project>/.codex/skills/markdown-i18n/translation-plan.yaml`
+Plan location:
+- **Project skill**: `<project_root>/.i18n/translation-plan.yaml`
+- **Global skill**: `<current_working_directory>/.i18n/translation-plan.yaml` (can override with `--output`)
+
+The `.i18n` directory is auto-created if it doesn't exist.
 
 ### Plan Format Example
 

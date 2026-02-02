@@ -9,7 +9,9 @@
   },
   "scripts": {
     "install-skill": "node install.js",
-    "test": "node scripts/validate.js --help"
+    "test": "node scripts/validate.js --help",
+    "test:create-plan": "node scripts/create-plan.js",
+    "test:validate": "node scripts/validate.js --help"
   },
   "files": [
     "install.js",

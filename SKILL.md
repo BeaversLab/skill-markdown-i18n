@@ -45,14 +45,23 @@ The interactive installer handles this automatically.
 
 ### Plan File Location
 
-The plan file should be stored in the **project's** skill folder, even if this skill is installed globally:
+The plan file is stored in the **project's `.i18n` directory**:
 
-| CLI | Plan Location |
-|-----|---------------|
-| Cursor | `<project>/.cursor/skills/markdown-i18n/translation-plan.yaml` |
-| Claude Code | `<project>/.claude/skills/markdown-i18n/translation-plan.yaml` |
-| Codex | `<project>/.codex/skills/markdown-i18n/translation-plan.yaml` |
-| Gemini | `<project>/.gemini/markdown-i18n/translation-plan.yaml` |
+| Installation Type | Plan Location |
+|-------------------|---------------|
+| Project skill | `<project_root>/.i18n/translation-plan.yaml` |
+| Global skill | `<current_working_directory>/.i18n/translation-plan.yaml` (can override with `--output`) |
+
+**Why `.i18n` directory?**
+- Centralized location for all i18n-related files
+- Works consistently whether skill is installed globally or per-project
+- The `.i18n` directory is auto-created if it doesn't exist
+
+**Custom output location:**
+You can specify a custom output path using the `--output` parameter:
+```bash
+node create-plan.js docs/en docs/zh --output custom/location/plan.yaml
+```
 
 ### Plan File Format (YAML)
 
@@ -122,10 +131,11 @@ When user requests batch translation, FIRST create the plan:
 "Translate all files in docs/en/ to docs/zh/"
 
 # Agent response
-1. Scan docs/en/ for all .md files
-2. Create .codex/skills/markdown-i18n/translation-plan.yaml
-3. Show plan summary to user
-4. Ask: "Plan created with 15 files. Start translation?"
+1. Run: node create-plan.js docs/en docs/zh
+   - For project skill: Creates <project_root>/.i18n/translation-plan.yaml
+   - For global skill: Creates <cwd>/.i18n/translation-plan.yaml
+2. Show plan summary to user
+3. Ask: "Plan created with 15 files. Start translation?"
 ```
 
 ### Resuming a Plan
@@ -137,7 +147,7 @@ When user wants to continue:
 "Continue translation" or "Resume i18n"
 
 # Agent response
-1. Look for existing translation-plan.yaml in project skill folder
+1. Look for existing translation-plan.yaml in .i18n directory
 2. Read current status (parse YAML)
 3. Find next pending file (status != done)
 4. Continue translation
@@ -369,10 +379,25 @@ cd <skill-path>/scripts && npm install
 
 | Script | Purpose | Usage |
 |--------|---------|-------|
-| `create-plan.js` | Generate translation plan | `node scripts/create-plan.js docs/en docs/zh -o translation-plan.yaml` |
-| `update-plan.js` | Update file status in plan | `node scripts/update-plan.js translation-plan.yaml docs/en/guide.md done` |
+| `create-plan.js` | Generate translation plan | `node scripts/create-plan.js docs/en docs/zh [-o custom/path.yaml]` |
+| `update-plan.js` | Update file status in plan | `node scripts/update-plan.js .i18n/translation-plan.yaml docs/en/guide.md done` |
 | `validate.js` | Validate translation quality | `node scripts/validate.js source.md target.md` |
 | `diff-sections.js` | Find changed sections | `node scripts/diff-sections.js old.md new.md` |
+
+### create-plan.js
+
+The script automatically detects whether the skill is installed globally or per-project:
+
+- **Project skill**: Creates plan at `<project_root>/.i18n/translation-plan.yaml`
+- **Global skill**: Creates plan at `<cwd>/.i18n/translation-plan.yaml` (can override with `-o`)
+
+```bash
+# Basic usage (auto-detects output location)
+node scripts/create-plan.js docs/en docs/zh
+
+# Custom output location
+node scripts/create-plan.js docs/en docs/zh -o /path/to/custom-plan.yaml
+```
 
 ### Status Values
 
