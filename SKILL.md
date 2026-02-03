@@ -679,6 +679,7 @@ node scripts/git-diff-sync.js docs/en/guide.md docs/zh/guide.md -o custom/git-sy
 **Output includes:**
 - Git diff hunks (line ranges of changes)
 - Affected markdown sections
+- Source and target commit hashes (for viewing diff later)
 - Instructions for incremental sync
 - Target file existence check
 
@@ -690,6 +691,11 @@ Analyzing Git changes...
   Git reference: HEAD
   Working directory: /project
 
+Resolving commit hashes...
+  Source commit: a1b2c3d4e5f6...
+  Target commit: 9f8e7d6c5b4a...
+  View diff: git diff 9f8e7d6c5b4a a1b2c3d4e5f6 -- docs/en/guide.md
+
 Getting Git diff...
   Found 2 change hunk(s)
 
@@ -700,8 +706,19 @@ Getting Git diff...
 
 Next steps:
   1. Review the plan file for detailed change information
-  2. Translate the affected sections
-  3. Validate the result
+  2. Process changes by operation type
+  3. View diff: git diff 9f8e7d6c5b4a a1b2c3d4e5f6 -- "docs/en/guide.md"
+  4. Validate: node scripts/validate.js "docs/en/guide.md" "docs/zh/guide.md"
+```
+
+**Viewing the diff later:**
+The plan file includes `source_commit` and `target_commit` in the `meta` section, so you can always view the exact diff that generated the plan:
+```bash
+# From the plan file
+git diff <target_commit> <source_commit> -- <source_file>
+
+# Example
+git diff 9f8e7d6c5b4a a1b2c3d4e5f6 -- docs/en/guide.md
 ```
 
 **Use case:** When a source file is updated in Git and you need to sync only the changes to the translation, rather than re-translating the entire file.

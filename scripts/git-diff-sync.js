@@ -41,6 +41,22 @@ async function gitExec(args, cwd = process.cwd()) {
 }
 
 /**
+ * Get current HEAD commit hash
+ */
+async function getCurrentCommit(cwd = process.cwd()) {
+  const { stdout } = await gitExec('rev-parse HEAD', cwd);
+  return stdout;
+}
+
+/**
+ * Resolve git reference to commit hash
+ */
+async function resolveGitRef(gitRef, cwd = process.cwd()) {
+  const { stdout } = await gitExec(`rev-parse ${gitRef}`, cwd);
+  return stdout;
+}
+
+/**
  * Get git diff for a file with full context
  */
 async function getGitDiff(filePath, gitRef = 'HEAD', cwd = process.cwd()) {
@@ -362,6 +378,14 @@ async function createGitDiffSyncPlan(sourceFile, targetFile, gitRef, outputPath,
     throw new Error('Not in a Git repository. Please run this command from within a Git repository.');
   }
 
+  // Get commit hashes for diff viewing
+  console.log(`\nResolving commit hashes...`);
+  const sourceCommit = await getCurrentCommit(cwd);
+  const targetCommit = await resolveGitRef(gitRef, cwd);
+  console.log(`  Source commit: ${sourceCommit}`);
+  console.log(`  Target commit: ${targetCommit}`);
+  console.log(`  View diff: git diff ${targetCommit} ${sourceCommit} -- ${sourceFile}`);
+
   // Get git diff
   console.log(`\nGetting Git diff...`);
   const diffOutput = await getGitDiff(sourceFile, gitRef, cwd);
@@ -377,6 +401,8 @@ async function createGitDiffSyncPlan(sourceFile, targetFile, gitRef, outputPath,
         source_file: sourceFile,
         target_file: targetFile,
         git_ref: gitRef,
+        source_commit: sourceCommit,
+        target_commit: targetCommit,
         type: 'git-diff-sync',
         format_version: '2.0',
         status: 'completed'
@@ -436,6 +462,8 @@ async function createGitDiffSyncPlan(sourceFile, targetFile, gitRef, outputPath,
       source_file: sourceFile,
       target_file: targetFile,
       git_ref: gitRef,
+      source_commit: sourceCommit,
+      target_commit: targetCommit,
       type: 'git-diff-sync',
       format_version: '2.0',
       status: 'pending'
@@ -505,7 +533,12 @@ async function writePlan(plan, outputPath) {
     console.log(`\nNext steps:`);
     console.log(`  1. Review the plan file for detailed change information`);
     console.log(`  2. Process changes by operation type`);
-    console.log(`  3. Validate: node scripts/validate.js "${plan.meta.source_file}" "${plan.meta.target_file}"`);
+    if (plan.meta.source_commit && plan.meta.target_commit) {
+      console.log(`  3. View diff: git diff ${plan.meta.target_commit} ${plan.meta.source_commit} -- "${plan.meta.source_file}"`);
+      console.log(`  4. Validate: node scripts/validate.js "${plan.meta.source_file}" "${plan.meta.target_file}"`);
+    } else {
+      console.log(`  3. Validate: node scripts/validate.js "${plan.meta.source_file}" "${plan.meta.target_file}"`);
+    }
   } else {
     console.log(`\nNo action needed - file is up to date.`);
   }
