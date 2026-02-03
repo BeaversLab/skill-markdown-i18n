@@ -305,6 +305,24 @@ async function main() {
       isDir = true;
     } else if (args[i] === '--json') {
       jsonOutput = true;
+    } else if (args[i] === '--help' || args[i] === '-h') {
+      console.log('Usage: node validate.js <source.md> <target.md> [options]');
+      console.log('       node validate.js --dir <source_dir> <target_dir> [options]');
+      console.log('');
+      console.log('Options:');
+      console.log('  --dir              Validate all files in directories');
+      console.log('  --json             Output as JSON');
+      console.log('  --source-locale    Source locale code (e.g., en)');
+      console.log('  --target-locale    Target locale code (e.g., zh)');
+      console.log('  --help, -h         Show this help message');
+      console.log('');
+      console.log('If locales are not specified, they will be auto-detected from directory paths.');
+      console.log('');
+      console.log('Examples:');
+      console.log('  node validate.js docs/en/guide.md docs/zh/guide.md');
+      console.log('  node validate.js docs/en/guide.md docs/zh/guide.md --source-locale en --target-locale zh');
+      console.log('  node validate.js --dir docs/en docs/zh');
+      process.exit(0);
     } else if (args[i] === '--source-locale') {
       sourceLocale = args[++i];
     } else if (args[i] === '--target-locale') {
@@ -315,21 +333,8 @@ async function main() {
   }
 
   if (paths.length < 2) {
-    console.log('Usage: node validate.js <source.md> <target.md> [options]');
-    console.log('       node validate.js --dir <source_dir> <target_dir> [options]');
-    console.log('');
-    console.log('Options:');
-    console.log('  --dir              Validate all files in directories');
-    console.log('  --json             Output as JSON');
-    console.log('  --source-locale    Source locale code (e.g., en)');
-    console.log('  --target-locale    Target locale code (e.g., zh)');
-    console.log('');
-    console.log('If locales are not specified, they will be auto-detected from directory paths.');
-    console.log('');
-    console.log('Examples:');
-    console.log('  node validate.js docs/en/guide.md docs/zh/guide.md');
-    console.log('  node validate.js docs/en/guide.md docs/zh/guide.md --source-locale en --target-locale zh');
-    console.log('  node validate.js --dir docs/en docs/zh');
+    console.log('Error: Missing required paths.');
+    console.log('Run with --help for usage information.');
     process.exit(1);
   }
 
