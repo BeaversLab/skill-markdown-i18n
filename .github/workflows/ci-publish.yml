@@ -2,10 +2,10 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
     tags: [ "v*" ]  # 仅当推送 v 开头的 tag 时触发发布流程
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   # 任务 1: 测试与构建 (CI)
