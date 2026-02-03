@@ -29,11 +29,14 @@ jobs:
         
       - name: Run Tests
         run: pnpm test
+        
+      - name: Run CI Smoke Tests
+        run: pnpm test:ci
 
   # 任务 2: 发布到 NPM (CD)
   publish:
     needs: test  # 必须先通过测试
-    if: startsWith(github.ref, 'refs/tags/v') # 仅在 tag 推送时运行
+    if: needs.test.result == 'success' && startsWith(github.ref, 'refs/tags/v') # 仅在测试成功且 tag 推送时运行
     runs-on: ubuntu-latest
     permissions:
       contents: read

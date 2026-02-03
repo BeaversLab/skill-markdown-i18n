@@ -161,6 +161,16 @@ node scripts/validate.js --dir docs/en docs/zh
 node scripts/diff-sections.js old-version.md new-version.md
 ```
 
+## Testing
+
+```bash
+# Basic validation (uses README as a minimal fixture)
+pnpm test
+
+# CI smoke tests (covers validate/create-plan/sync-plan/git-diff-sync)
+pnpm test:ci
+```
+
 ## File Structure
 
 ```
