@@ -18,6 +18,7 @@
   },
   "files": [
     "install.js",
+    "CHANGELOG.md",
     "SKILL.md",
     "README.md",
     "glossary.md",

@@ -1,5 +1,7 @@
 # Markdown i18n Skill
 
+[![CI/CD](https://github.com/BeaversLab/skill-markdown-i18n/actions/workflows/ci-publish.yml/badge.svg)](https://github.com/BeaversLab/skill-markdown-i18n/actions/workflows/ci-publish.yml)
+
 Translate and synchronize markdown documentation across languages.
 
 ## Features
