@@ -6,6 +6,7 @@ on:
     tags: [ "v*" ]  # 仅当推送 v 开头的 tag 时触发发布流程
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch: # 允许手动触发流程
 
 jobs:
   # 任务 1: 测试与构建 (CI)
